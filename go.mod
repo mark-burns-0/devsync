@@ -3,10 +3,13 @@ module github.com/mark-burns-0/devsync
 go 1.24.10
 
 require (
+	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/k0kubun/pp/v3 v3.5.1
+)
+
+require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/k0kubun/pp/v3 v3.5.1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	golang.org/x/sys v0.29.0 // indirect
