@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-	"time"
 )
 
 type Syncer struct {
@@ -18,14 +17,9 @@ func New(dirs []string) *Syncer {
 }
 
 func (sy *Syncer) Sync() error {
-	process := func(path string) error {
-		fmt.Printf("Processing: %s\n", path)
-		time.Sleep(1 * time.Second)
-		return nil
-	}
 	queueSize := max(len(sy.dirs)/5, 10)
 
-	wp := newPool(5, queueSize, process)
+	wp := newPool(5, queueSize, syncGitRepository)
 	wp.Start()
 
 	wg := sync.WaitGroup{}

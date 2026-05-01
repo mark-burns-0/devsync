@@ -28,6 +28,7 @@ func New(cfg *config.SyncConfig) *Scanner {
 			".idea":                   true,
 			".vscode":                 true,
 			"docker-composer-laravel": true,
+			"flutter":                 true,
 		},
 	}
 }
