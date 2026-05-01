@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -34,30 +33,13 @@ func syncGitRepository(path string) error {
 		return err
 	}
 
-	wp := newPool(3, max(len(branches)/2, 5), func(branch string) error {
-		cmd := exec.CommandContext(ctx, "git", "fetch", "origin", fmt.Sprintf("%s:%s", branch, branch))
-		cmd.Dir = path
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			fmt.Printf("    Error fetching branch '%s': %v\nOutput: %s\n", branch, err, string(output))
-			return err
+	for _, branch := range branches {
+		if err := fetchBranch(ctx, path, branch); err != nil {
+			fmt.Printf("    Error fetching branch '%s': %v\n", branch, err)
+			continue
 		}
 		fmt.Printf("    Successfully fetched branch '%s'\n", branch)
-		return nil
-	})
-
-	wp.Start()
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for _, branch := range branches {
-			wp.Add(branch)
-		}
-		wp.CloseJobs()
-	}()
-	wg.Wait()
-	wp.Stop()
+	}
 
 	return nil
 }
@@ -81,7 +63,6 @@ func getRemoteBranches(ctx context.Context, path string) ([]string, error) {
 	}
 
 	branches := strings.Split(string(output), "\n")
-	// Очищаем и фильтруем
 	var result []string
 	for _, b := range branches {
 		b = strings.TrimSpace(b)
@@ -90,4 +71,16 @@ func getRemoteBranches(ctx context.Context, path string) ([]string, error) {
 		}
 	}
 	return result, nil
+}
+
+func fetchBranch(ctx context.Context, path string, branch string) error {
+	cmd := exec.CommandContext(ctx, "git", "fetch", "origin", fmt.Sprintf("%s:%s", branch, branch))
+	cmd.Dir = path
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("    Error fetching branch '%s': %v\nOutput: %s\n", branch, err, string(output))
+		return err
+	}
+	fmt.Printf("    Successfully fetched branch '%s'\n", branch)
+	return nil
 }
