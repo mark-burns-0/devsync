@@ -1,37 +1,19 @@
 package app
 
 import (
-	"fmt"
-	"io/fs"
-	"path/filepath"
-	"strings"
-
 	"github.com/k0kubun/pp/v3"
 	"github.com/mark-burns-0/devsync/internal/config"
+	"github.com/mark-burns-0/devsync/internal/scanner"
 )
 
 func Run(cfg *config.SyncConfig) {
-	dirs := []string{}
-	err := filepath.WalkDir(cfg.ProjectsRoot, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() && d.Name() == ".git" {
-			path := strings.TrimSuffix(strings.TrimPrefix(path, cfg.ProjectsRoot), cfg.GitDir)
-			cleanPath := strings.Trim(path, string(filepath.Separator))
-			dirs = append(dirs, cleanPath)
-			return fs.SkipDir
-		}
-
-		return nil
-	})
+	scanner := scanner.New(cfg)
+	dirs, err := scanner.ScanDirs()
 
 	if err != nil {
-		fmt.Printf("Ошибка при поиске: %v\n", err)
+		panic(err)
 	}
-
-	pp.Print(dirs)
+	pp.Print(len(dirs))
 
 	// cmd := exec.Command("ls", "-la")
 	// cmd.Dir = "."
