@@ -19,14 +19,15 @@ func New(cfg *config.SyncConfig) *Scanner {
 	return &Scanner{
 		cfg: cfg,
 		skipDirs: map[string]bool{
-			"node_modules": true,
-			"vendor":       true,
-			".cache":       true,
-			"__pycache__":  true,
-			"dist":         true,
-			"build":        true,
-			".idea":        true,
-			".vscode":      true,
+			"node_modules":            true,
+			"vendor":                  true,
+			".cache":                  true,
+			"__pycache__":             true,
+			"dist":                    true,
+			"build":                   true,
+			".idea":                   true,
+			".vscode":                 true,
+			"docker-composer-laravel": true,
 		},
 	}
 }
