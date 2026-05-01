@@ -1,7 +1,15 @@
 package main
 
-import "github.com/mark-burns-0/devsync/internal/app"
+import (
+	"github.com/mark-burns-0/devsync/internal/app"
+	"github.com/mark-burns-0/devsync/internal/config"
+)
 
 func main() {
-	app.Run()
+	cfg, err := config.New(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	app.Run(cfg)
 }
