@@ -14,7 +14,7 @@ const (
 )
 
 func syncGitRepository(path string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
 	defer cancel()
 
 	fmt.Printf("Processing Git repository: %s\n", path)
@@ -74,7 +74,7 @@ func getRemoteBranches(ctx context.Context, path string) ([]string, error) {
 }
 
 func fetchBranch(ctx context.Context, path string, branch string) error {
-	cmd := exec.CommandContext(ctx, "git", "fetch", "origin", fmt.Sprintf("%s:%s", branch, branch))
+	cmd := exec.CommandContext(ctx, "git", "fetch", "origin", fmt.Sprintf("%s:refs/remotes/origin/%s", branch, branch))
 	cmd.Dir = path
 	output, err := cmd.CombinedOutput()
 	if err != nil {
